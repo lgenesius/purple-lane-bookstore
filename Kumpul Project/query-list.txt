@@ -1,0 +1,70 @@
+CREATE TABLE roles (
+	roleId INT AUTO_INCREMENT PRIMARY KEY,
+	roleName VARCHAR(30) NOT NULL UNIQUE 
+)
+
+
+CREATE TABLE users (
+	userId INT AUTO_INCREMENT PRIMARY KEY,
+	roleId INT NOT NULL,
+	username VARCHAR(30) NOT NULL UNIQUE,
+	password VARCHAR(30) NOT NULL,
+	FOREIGN KEY(roleId) REFERENCES roles (roleId) ON UPDATE CASCADE ON DELETE CASCADE
+
+)
+
+
+INSERT INTO roles (roleId, roleName) VALUES (NULL, "Manager"), (NULL, "Admin"), (NULL, "Promotion Team"), (NULL, "Customer")
+
+
+CREATE TABLE products (
+	productId INT AUTO_INCREMENT PRIMARY KEY,
+	productName VARCHAR(100) NOT NULL,
+	productAuthor VARCHAR(30) NOT NULL,
+	productPrice INT NOT NULL,
+	productStock INT NOT NULL
+
+)
+
+
+CREATE TABLE promos (
+	promoId INT AUTO_INCREMENT PRIMARY KEY,
+	promoCode VARCHAR(30) NOT NULL UNIQUE,
+	promoDiscount INT NOT NULL,
+	promoNote VARCHAR(200) NOT NULL	
+
+)
+
+
+CREATE TABLE carts (
+	userId INT,
+	productId INT,
+	productQuantity INT NOT NULL,
+	FOREIGN KEY(userId) REFERENCES users (userId) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY(productId) REFERENCES products (productId) ON UPDATE CASCADE ON DELETE CASCADE,
+	PRIMARY KEY(userId, productId)
+
+)
+
+
+CREATE TABLE transactions (
+	transactionId INT AUTO_INCREMENT PRIMARY KEY,
+	transactionDate TIMESTAMP NOT NULL,
+	paymentType VARCHAR(30) NOT NULL,
+	cardNumber VARCHAR(50) NOT NULL,
+	promoCode VARCHAR(30),
+	userId INT,
+	FOREIGN KEY(userId) REFERENCES users (userId) ON UPDATE CASCADE ON DELETE CASCADE
+
+)
+
+
+CREATE TABLE transaction_details (
+	transactionId INT,
+	productId INT,
+	productQuantity INT NOT NULL,
+	FOREIGN KEY(transactionId) REFERENCES transactions (transactionId) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY(productId) REFERENCES products (productId) ON UPDATE CASCADE,
+	PRIMARY KEY(transactionId, productId)
+
+)
